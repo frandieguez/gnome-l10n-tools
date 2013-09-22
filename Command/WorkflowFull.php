@@ -39,14 +39,13 @@ EOF
         $this->input = $input;
         $this->output = $output;
 
-        $this->showInitializationBanner();
         if (!$this->checkEnvironment()) {
             die();
         }
 
         $config = $this->getConfig();
 
-        $stats = $this->fetchStatsForReleaseAndLang($config['release_set'], $config['lang']);
+        $stats = $this->fetchStatsForReleaseAndLang($config['release_set'], $config['language']);
         $untranslatedModules = $this->getUntranslatedModules($stats);
 
 
@@ -59,7 +58,7 @@ EOF
                 ." {$module['stats']['untranslated']} untranslated, {$module['stats']['fuzzy']} fuzzy\n";
         }
 
-        $this->output->writeln("- Modules with translations needed in {$config['lang']}/{$config['release_set']}");
+        $this->output->writeln("- Modules with translations needed in {$config['language']}/{$config['release_set']}");
         $selection = (int) $dialog->ask(
             $output,
             $pickModules.
@@ -82,17 +81,9 @@ EOF
 
     }
 
-    protected function showInitializationBanner()
-    {
-        $this->output->writeln("GNOME Damned Lies worker");
-    }
-
     protected function getConfig()
     {
-        return array(
-            'lang'        => 'gl',
-            'release_set' => 'gnome-office'
-        );
+        return $this->getApplication()->config['parameters'];
     }
 
     protected function fetchStatsForReleaseAndLang($releaseSet, $lang)
@@ -106,10 +97,6 @@ EOF
 
         $modules = array();
         foreach ($categories as $category) {
-
-            // $untranslated = (int) $category->untranslated;
-            // $fuzzy        = (int) $category->fuzzy;
-            // $translated   = (int) $category->translated;
             $rawModules   = $category->module;
 
             foreach ($rawModules as $module) {
