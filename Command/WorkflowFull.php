@@ -51,6 +51,12 @@ EOF
 
         $dialog = $this->getHelperSet()->get('dialog');
 
+        if (count($untranslatedModules) <= 0) {
+            $this->output->writeln('All modules translated! Go to rest!');
+
+            return false;
+        }
+
         $pickModules = '';
         foreach ($untranslatedModules as $key => $module) {
             $pickModules .=
