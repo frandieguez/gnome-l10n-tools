@@ -58,7 +58,7 @@ EOF
                 ." {$module['stats']['untranslated']} untranslated, {$module['stats']['fuzzy']} fuzzy\n";
         }
 
-        $this->output->writeln("- Modules with translations needed in {$config['language']}/{$config['release_set']}");
+        $this->output->writeln("   Modules with translations needed in {$config['language']}/{$config['release_set']}");
         $selection = (int) $dialog->ask(
             $output,
             $pickModules.
@@ -88,7 +88,7 @@ EOF
 
     protected function fetchStatsForReleaseAndLang($releaseSet, $lang)
     {
-        $this->output->write("- Fetching DL stats...");
+        $this->output->write("<comment>Fetching DL stats...</comment>");
 
         $url = "https://l10n.gnome.org/languages/$lang/$releaseSet/xml";
         $serverContents = simplexml_load_file($url);
