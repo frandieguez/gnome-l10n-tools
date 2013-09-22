@@ -12,6 +12,7 @@ $application = new Application('GNOME l10n tools', '0.1');
 $config = Yaml::parse(__DIR__.'/config.yaml');
 
 $application->config = $config;
+$application->config['base_dir'] = getcwd();
 
 // Iterate over all the available command classes and register them into the
 // console application

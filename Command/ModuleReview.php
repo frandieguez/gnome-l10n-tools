@@ -47,8 +47,8 @@ EOF
 
         $module = $this->input->getArgument('module');
 
-        $reviewerExecPath = getcwd().'/tools/pology/bin/posieve';
-        $modulePath = getcwd()."/modules/{$module}/po/{$languageCode}.po";
+        $reviewerExecPath = $this->config['base_dir'].'/tools/pology/bin/posieve';
+        $modulePath = $this->config['base_dir']."/modules/{$module}/po/{$languageCode}.po";
 
         $this->output->writeln("<comment>Reviewing spelling in module $module</comment>");
 

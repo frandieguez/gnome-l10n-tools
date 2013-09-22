@@ -46,7 +46,7 @@ EOF
 
         $module = $this->input->getArgument('module');
 
-        chdir(getcwd().'/modules/'.$module);
+        chdir($this->config['base_dir'].'/modules/'.$module);
 
         $this->output->write("<comment>Reseting module $module</comment>");
 

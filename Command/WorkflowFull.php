@@ -89,7 +89,7 @@ EOF
 
     protected function getConfig()
     {
-        return $this->getApplication()->config['parameters'];
+        return $this->getApplication()->config;
     }
 
     protected function fetchStatsForReleaseAndLang($releaseSet, $lang)

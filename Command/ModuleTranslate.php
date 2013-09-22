@@ -49,8 +49,6 @@ EOF
         $module = $this->input->getArgument('module');
         $branch = $this->input->getOption('branch');
 
-        $baseCwd = getcwd();
-
         $workingPath = self::searchForModule($module);
         if (!$workingPath) {
             $this->output->writeln("<error>Unable to find the module '$module'.</error>");
@@ -68,7 +66,7 @@ EOF
 
         $this->output->writeln("<comment>Translating module $module [$branch]</comment>");
 
-        chdir($baseCwd);
+        chdir($this->config['base_dir']);
         $workingPath = self::searchForModule($module);
         chdir($workingPath);
 
@@ -95,7 +93,7 @@ EOF
      **/
     public function searchForModule($moduleName)
     {
-        return realpath(getcwd()."/modules/$moduleName/");
+        return realpath($this->config['base_dir']."/modules/$moduleName/");
     }
 
     /**

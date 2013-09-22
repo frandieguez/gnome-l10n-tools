@@ -44,7 +44,7 @@ EOF
         $this->output = $output;
         $this->config = $this->getApplication()->config;
 
-        chdir(getcwd().'/modules');
+        chdir($this->config['base_dir'].'/modules');
 
         $module = $this->input->getArgument('module');
 
