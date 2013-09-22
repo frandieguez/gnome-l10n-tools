@@ -1,3 +1,9 @@
-parameters:
-    release_set: RELEASE_NAME
-    language: LANGUAGE_SHORT_NAME
+# Which release set do you want to translate
+release_set: gnome-3-10
+
+# Which language do you want to work with
+language: gl # Galician
+
+# GNOME Git repository settings
+repository:
+    username: your_gnome_username

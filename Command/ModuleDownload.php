@@ -42,7 +42,7 @@ EOF
     {
         $this->input = $input;
         $this->output = $output;
-        $this->config = $this->getApplication()->config['parameters'];
+        $this->config = $this->getApplication()->config;
 
         chdir(getcwd().'/modules');
 
