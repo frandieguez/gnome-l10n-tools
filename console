@@ -24,9 +24,7 @@ foreach ($availableCommandClases as $file) {
     );
 
     // require_once $file;
-    new $commandClass();
     if (class_exists($commandClass)) {
-
         $application->add(new $commandClass);
     }
 }
