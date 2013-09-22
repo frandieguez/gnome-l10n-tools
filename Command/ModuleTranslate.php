@@ -45,17 +45,31 @@ EOF
         $this->output = $output;
         $this->config = $this->getApplication()->config['parameters'];
 
+
         $module = $this->input->getArgument('module');
         $branch = $this->input->getOption('branch');
 
-        $this->output->writeln("\tTranslating $module [$branch] -> NOT IMPLEMENTED");
+        $baseCwd = getcwd();
+
         $workingPath = self::searchForModule($module);
         if (!$workingPath) {
             $this->output->writeln("<error>Unable to find the module '$module'.</error>");
+
+            $arguments = array(
+                'command' => 'module:download',
+                'module'  => $module,
+            );
+            $input = new ArrayInput($arguments);
+
+            $command = $this->getApplication()->find('module:download');
+
+            $returnCode = $command->run($input, $output);
         }
 
         $this->output->writeln("<comment>Translating module $module [$branch]</comment>");
 
+        chdir($baseCwd);
+        $workingPath = self::searchForModule($module);
         chdir($workingPath);
 
         // Checkout branch
