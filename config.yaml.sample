@@ -1,0 +1,3 @@
+parameters:
+    release_set: RELEASE_NAME
+    language: LANGUAGE_SHORT_NAME

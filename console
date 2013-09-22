@@ -1,0 +1,31 @@
+#!/usr/bin/env php
+<?php
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Console\Application;
+
+require __DIR__.'/vendor/autoload.php';
+
+$application = new Application();
+
+
+
+// Iterate over all the available command classes and register them into the
+// console application
+// $basePath = APPLICATION_PATH.'/app/';
+$availableCommandClases = glob(__DIR__.'/Command/*');
+foreach ($availableCommandClases as $file) {
+    $commandClass = str_replace(
+        array(__DIR__, '.php', '/'),
+        array('', '', '\\'),
+        $file
+    );
+
+    require_once $file;
+
+    if (class_exists($commandClass)) {
+
+        $application->add(new $commandClass);
+    }
+}
+$application->run();

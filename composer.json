@@ -1,0 +1,24 @@
+{
+    "name": "openhost/opennemas",
+    "description": "High performance and scalable NMS focused in journalism workflow",
+    "keywords": ["nms", "newspapres", "magazines", "content management system"],
+    "homepage": "http://opennemas.com",
+    "type": "cms",
+    "license": "closed source",
+    "version": "0.8.3",
+    "authors": [
+        {
+            "name": "OpenHost developers",
+            "email": "developers@openhost.es"
+        }
+    ],
+    "require": {
+        "php"                            : ">=5.3.2",
+        "symfony/class-loader"           : "2.3.*",
+        "symfony/config"                 : "2.3.*",
+        "symfony/console"                : "2.3.*"
+    },
+    "autoload": {
+        "psr-0": {"Command\\": "../Command/"}
+    }
+}
