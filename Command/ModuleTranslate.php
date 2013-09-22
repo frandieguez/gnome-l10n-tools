@@ -105,6 +105,7 @@ EOF
     {
         if (!is_null($branch)) {
             $this->output->writeln("\t<info>Checking out to branch $branch</info>");
+            exec('git checkout '.$branch);
         }
 
         return false;
