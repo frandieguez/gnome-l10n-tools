@@ -72,31 +72,59 @@ EOF
         }
 
         $pickModules = '';
+        $autoComplete = array();
         foreach ($untranslatedModules as $key => $module) {
             $pickModules .=
-                "\t[$key] {$module['name']} ({$module['branch']}) "
+                "\t<comment>{$module['name']}</comment> - {$module['branch']} ~ "
                 ." {$module['stats']['untranslated']} untranslated, {$module['stats']['fuzzy']} fuzzy\n";
+            $autoComplete []= $module['name'];
         }
 
-        $this->output->writeln("   Modules with translations needed in {$config['language']}/{$config['release_set']}");
-        $selection = (int) $dialog->ask(
-            $output,
-            $pickModules.
-            '   Which module do you want to translate [0]: ',
-            0
-        );
-
-        if (is_integer($selection)) {
-            $arguments = array(
-                'command'  => 'module:translate',
-                'module' => $untranslatedModules[$selection]['name'],
-                '--branch' => $untranslatedModules[$selection]['branch']
+        while (true) {
+            $this->output->writeln("   Modules with translations needed in {$config['language']}/{$config['release_set']}");
+            $selection = (string) $dialog->ask(
+                $output,
+                $pickModules.
+                '   Which module do you want to translate [0]: ',
+                0,
+                $autoComplete
             );
-            $input = new ArrayInput($arguments);
 
-            $command = $this->getApplication()->find('module:translate');
+            if (is_string($selection)) {
+                $command = $this->getApplication()->find('module:translate');
+                $returnCode = $command->run(
+                    new ArrayInput(
+                        array(
+                            'command'  => 'module:translate',
+                            'module' => $untranslatedModules[$selection]['name'],
+                            '--branch' => $untranslatedModules[$selection]['branch']
+                        )
+                    ),
+                    $output
+                );
 
-            $returnCode = $command->run($input, $output);
+                $command = $this->getApplication()->find('module:commit');
+                $returnCode = $command->run(
+                    new ArrayInput(
+                        array(
+                            'command'  => 'module:commit',
+                            'module' => $untranslatedModules[$selection]['name'],
+                        )
+                    ),
+                    $output
+                );
+
+                $command = $this->getApplication()->find('module:push');
+                $returnCode = $command->run(
+                    new ArrayInput(
+                        array(
+                            'command'  => 'module:push',
+                            'module' => $untranslatedModules[$selection]['name'],
+                        )
+                    ),
+                    $output
+                );
+            }
         }
 
     }
@@ -108,10 +136,15 @@ EOF
 
     protected function fetchStatsForReleaseAndLang($releaseSet, $lang)
     {
-        $this->output->write("<comment>Fetching DL stats...</comment>");
+        $this->output->write("   Fetching DL stats...");
 
         $url = "https://l10n.gnome.org/languages/$lang/$releaseSet/xml";
-        $serverContents = simplexml_load_file($url);
+        $serverContents = @simplexml_load_file($url);
+
+        if (!$serverContents) {
+            $this->output->writeln("\t<error>Release set '$releaseSet' or language '$lang' not valid</error>");
+            die();
+        }
 
         $categories = $serverContents->xpath('category');
 
@@ -120,7 +153,7 @@ EOF
             $rawModules   = $category->module;
 
             foreach ($rawModules as $module) {
-                $modules []= array(
+                $modules [(string) $module->attributes()['id']]= array(
                     'name'   => (string) $module->attributes()['id'],
                     'branch' => (string) $module->attributes()['branch'],
                     'stats'  => array(
@@ -143,6 +176,20 @@ EOF
             $stats,
             function ($module) {
                 return (($module['stats']['untranslated'] + $module['stats']['fuzzy']) > 0);
+            }
+        );
+
+        uasort(
+            $modules,
+            function ($a, $b) {
+                $aNotCompleted = $a['stats']['untranslated'] + $a['stats']['fuzzy'];
+                $bNotCompleted = $b['stats']['untranslated'] + $b['stats']['fuzzy'];
+
+                if ($aNotCompleted == $bNotCompleted) {
+                    return 0;
+                }
+
+                return ($aNotCompleted < $bNotCompleted) ? -1 : 1;
             }
         );
 
