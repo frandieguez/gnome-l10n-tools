@@ -22,14 +22,17 @@ class WorkflowFull extends Command
     {
         $this
             ->setName('workflow:full')
+            ->setDefinition(
+                array(
+                    new InputOption('release-set', 'r', InputOption::VALUE_REQUIRED, 'The release set to translate', null),
+                    new InputOption('language', 'l', InputOption::VALUE_REQUIRED, 'The language to translate into', null),
+                )
+            )
             ->setDescription('Extracts and updates the localized strings')
             ->setHelp(
                 <<<EOF
 The <info>damned:lies</info> checks the GNOME Damned Lies web service to
 fetch new translation settings.
-
-<info>php app/console damned:lies</info>
-
 EOF
             );
     }
@@ -45,9 +48,20 @@ EOF
 
         $config = $this->getConfig();
 
+        $releaseSet = $this->input->getOption('release-set');
+        if (!is_null($releaseSet)) {
+            $config['release_set'] = $releaseSet;
+        }
+
+        $releaseSet = $this->input->getOption('language');
+        if (!is_null($releaseSet)) {
+            $config['language'] = $releaseSet;
+        }
+
+        $this->output->writeln("<comment>Full workflow for {$config['release_set']} [{$config['language']}]...</comment>");
+
         $stats = $this->fetchStatsForReleaseAndLang($config['release_set'], $config['language']);
         $untranslatedModules = $this->getUntranslatedModules($stats);
-
 
         $dialog = $this->getHelperSet()->get('dialog');
 
