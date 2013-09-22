@@ -6,9 +6,7 @@ use Symfony\Component\Console\Application;
 
 require __DIR__.'/vendor/autoload.php';
 
-$application = new Application();
-
-
+$application = new Application('GNOME l10n tools', '0.1');
 
 // Iterate over all the available command classes and register them into the
 // console application
@@ -28,4 +26,5 @@ foreach ($availableCommandClases as $file) {
         $application->add(new $commandClass);
     }
 }
+
 $application->run();
