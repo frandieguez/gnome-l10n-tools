@@ -53,5 +53,8 @@ EOF
         $username = $this->config['repository']['username'];
 
         shell_exec("git clone ssh://$username@git.gnome.org/git/$module");
+
+        chdir($this->config['base_dir'].'/modules/'.$module);
+        exec('git submodule update --init');
     }
 }
