@@ -44,51 +44,40 @@ EOF
         $this->output = $output;
         $this->config = $this->getApplication()->config;
 
-
         $module = $this->input->getArgument('module');
         $branch = $this->input->getOption('branch');
 
-        $workingPath = self::searchForModule($module);
-        if (!$workingPath) {
-            $this->output->writeln("<error>Unable to find the module '$module'.</error>");
-
-            $arguments = array(
-                'command' => 'module:download',
-                'module'  => $module,
-            );
-            $input = new ArrayInput($arguments);
-
-            $command = $this->getApplication()->find('module:download');
-
-            $returnCode = $command->run($input, $output);
-        }
-
         $this->output->writeln("<comment>Translating module $module [$branch]</comment>");
 
+        // Fetch latest changes from module or download it if not present
         chdir($this->config['base_dir']);
+        $command = $this->getApplication()->find('module:download')->run(
+            new ArrayInput(
+                array(
+                    'command' => 'module:download',
+                    'module'  => $module,
+                )
+            ),
+            $output
+        );
+
         $workingPath = self::searchForModule($module);
         chdir($workingPath);
 
-        // Checkout branch
+        // Checkout to the desired branch
         $this->checkoutBranch($branch);
 
-        // Execute pull if user wants to
-        $this->getLatestRepositoryChanges();
-
-        // Execute intltool-update
+        // Update translations file against current code
         $this->updateLatestTranslations();
 
-        // Open pofile editor
+        // Open pofile editor with the translations file to complete it
         $this->openPofileEditor();
-
-        // $this->output->writeln("\tTranslating $module [$branch] -> NOT IMPLEMENTED");
     }
 
     /**
      * Search module path from its name
      *
      * @return void
-     * @author
      **/
     public function searchForModule($moduleName)
     {
@@ -111,19 +100,6 @@ EOF
     }
 
     /**
-     * Makes a git pull over one path
-     *
-     * @return boolean
-     **/
-    public function getLatestRepositoryChanges()
-    {
-        $this->output->writeln("\t<info>Getting latest repository changes</info>");
-
-        exec('git pull --rebase');
-        exec('git submodule update --init');
-    }
-
-    /**
      * Updates galician translations for a module
      *
      * @return boolean
@@ -142,12 +118,13 @@ EOF
      * Launches the pofile editor
      *
      * @return void
-     * @author
      **/
     public function openPofileEditor()
     {
         $this->output->writeln("\t<info>Launching pofile editor</info>");
-        $output = shell_exec("xdg-open ".getcwd()."/".$this->config['language'].".po");
-        $this->output->writeln($output);
+
+        $this->output->writeln(
+            shell_exec("xdg-open ".getcwd()."/".$this->config['language'].".po")
+        );
     }
 }
