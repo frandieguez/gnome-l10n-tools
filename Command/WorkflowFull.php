@@ -81,20 +81,34 @@ EOF
             return false;
         }
 
-        $pickModules = '';
+        $rows = array();
         $autoComplete = array();
         foreach ($untranslatedModules as $key => $module) {
-            $pickModules .=
-                "\t<comment>{$module['name']}</comment> - {$module['branch']} ~ "
-                ." {$module['stats']['untranslated']} untranslated, {$module['stats']['fuzzy']} fuzzy\n";
+            $rows []= array(
+                $module['name'],
+                $module['branch'],
+                $module['stats']['untranslated'],
+                $module['stats']['fuzzy'],
+                sprintf('%3d%%', ($module['stats']['total'] - $module['stats']['untranslated'] - $module['stats']['fuzzy']) / ($module['stats']['total']) * 100)
+            );
+
             $autoComplete []= $module['name'];
         }
 
+        $table = $this->getHelperSet()->get('table');
+        $table
+            ->setLayout(\Symfony\Component\Console\Helper\TableHelper::LAYOUT_BORDERLESS)
+            ->setHeaders(array('Name', 'Branch', 'Untr.', 'Fuzzy', '%'))
+            ->setRows($rows);
+
         while (true) {
-            $this->output->writeln("   Modules with translations needed in {$config['language']}/{$config['release_set']}");
+            $this->output->writeln("   Modules with translations needed in {$config['language']}/{$config['release_set']} (".count($untranslatedModules).")");
+
+            $tableRender = $table->render($output);
+
             $selection = (string) $dialog->ask(
                 $output,
-                $pickModules.
+                $tableRender.
                 '   Which module do you want to translate [0]: ',
                 0,
                 $autoComplete
@@ -170,6 +184,10 @@ EOF
                         'translated'   => (int) $module->domain->translated,
                         'untranslated' => (int) $module->domain->untranslated,
                         'fuzzy'        => (int) $module->domain->fuzzy,
+                        'total'        =>
+                            (int) $module->domain->translated
+                            + (int) $module->domain->fuzzy
+                            + (int) $module->domain->untranslated,
                     )
                 );
             }
