@@ -28,11 +28,21 @@ class WorkflowFull extends Command
                     new InputOption('language', 'l', InputOption::VALUE_REQUIRED, 'The language to translate into', null),
                 )
             )
-            ->setDescription('Extracts and updates the localized strings')
-            ->setHelp(
-                <<<EOF
+            ->setDescription('Allows to translate a release set into a language')
+            ->setHelp(<<<EOF
 The <info>damned:lies</info> checks the GNOME Damned Lies web service to
-fetch new translation settings.
+fetch real-time translation status for a given release set and language.
+
+If there are new untranslated strings it shows the list of modules
+and allows the user to select one of them to translate.
+When the user selects one and pofile editor will raise to complete
+those strings.
+After that it will ask the user to accept changes, it will commit
+them to the local repository and finally it will push them to the
+GNOME Git repository.
+
+All the workflow will start at the beggining until all the modules
+are completed.
 EOF
             );
     }

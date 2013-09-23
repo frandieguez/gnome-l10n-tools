@@ -22,18 +22,21 @@ class ModuleReviewSpell extends Command
     {
         $this
             ->setName('module:review:spell')
-            ->setDescription('Resets the module local repository')
+            ->setDescription('Spelling review for a given module')
             ->setDefinition(
                 array(
-                    new InputArgument('module', InputArgument::REQUIRED),
+                    new InputArgument('module', InputArgument::REQUIRED, 'The module name to review'),
                 )
             )
-            ->setHelp(
-                <<<EOF
-The <info>module:reset</info> clones the GNOME repository for a given module
+            ->setHelp(<<<EOF
+The <info>module:review:spell</info> performs an spelling review  in
+all the translations for a given module and language.
 
-<info>php app/console translate:download MODULE_NAME</info>
+This command uses posieve under the hood and your available hunspell
+dictionary.
 
+[WARNING] Check if your language has available hunspell rules
+for your language.
 EOF
             );
     }

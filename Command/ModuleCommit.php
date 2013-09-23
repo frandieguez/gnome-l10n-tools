@@ -25,15 +25,13 @@ class ModuleCommit extends Command
             ->setDescription('Commits available changes to local repository')
             ->setDefinition(
                 array(
-                    new InputArgument('module', InputArgument::REQUIRED),
+                    new InputArgument('module', InputArgument::REQUIRED, 'Module to commit'),
                 )
             )
-            ->setHelp(
-                <<<EOF
+            ->setHelp(<<<EOF
 The <info>module:commit</info> commits available changes to the local repository.
 
-<info>php app/console module:commit MODULE_NAME</info>
-
+Before committing changes it shows the available changes and asks the user to accept them.
 EOF
             );
     }
@@ -49,7 +47,7 @@ EOF
 
         $this->output->writeln("<comment>Committing module '$module'</comment>");
 
-        $output = shell_exec('git status');
+        $output = shell_exec('LC_ALL=C git status');
 
         $dialog = $this->getHelperSet()->get('dialog');
         $selection = (string) $dialog->askConfirmation(
@@ -64,8 +62,10 @@ EOF
             return false;
         }
 
+        $languageCode = $this->config['language'];
         $languageName = $this->config['language_name'];
-        shell_exec("git add po/".$this->config['language'].'.po');
+
+        shell_exec("git add po/{$languageCode}.po");
         shell_exec("git commit -m 'Updated {$languageName} translations'");
 
         $this->output->writeln('Commit DONE');

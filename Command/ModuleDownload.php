@@ -22,18 +22,22 @@ class ModuleDownload extends Command
     {
         $this
             ->setName('module:download')
-            ->setDescription('Explanation not completed')
+            ->setDescription('Clones the repository for a given module')
             ->setDefinition(
                 array(
-                    new InputArgument('module', InputArgument::REQUIRED),
+                    new InputArgument('module', InputArgument::REQUIRED, 'The module name to download'),
                 )
             )
-            ->setHelp(
-                <<<EOF
-The <info>translate:module</info> clones the GNOME repository for a given module
+            ->setHelp(<<<EOF
+The <info>module:download</info> clones the GNOME repository
+for a given module.
 
-<info>php app/console translate:download MODULE_NAME</info>
+Executes a git clone against the module repository in the
+GNOME servers and initializes the available submodules in
+the cloned repository.
 
+If the repository is already cloned it gets the latest changes
+from the external repository.
 EOF
             );
     }

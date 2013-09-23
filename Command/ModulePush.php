@@ -28,12 +28,12 @@ class ModulePush extends Command
                     new InputArgument('module', InputArgument::REQUIRED),
                 )
             )
-            ->setHelp(
-                <<<EOF
-The <info>module:commit</info> commits available changes to the local repository.
+            ->setHelp(<<<EOF
+The <info>module:push</info> commits available changes to
+the local repository.
 
-<info>php app/console module:commit MODULE_NAME</info>
-
+Before pushing changes to the external repository, module:push
+fetches all the changes from there, in order to avoid push errors.
 EOF
             );
     }

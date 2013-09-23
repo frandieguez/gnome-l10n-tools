@@ -22,19 +22,18 @@ class ModuleTranslate extends Command
     {
         $this
             ->setName('module:translate')
-            ->setDescription('Explanation not completed')
+            ->setDescription('Opens editor for the updated translations file of a module')
             ->setDefinition(
                 array(
-                    new InputArgument('module', InputArgument::REQUIRED),
+                    new InputArgument('module', InputArgument::REQUIRED, 'The module to translate'),
                     new InputOption('branch', 'b', InputOption::VALUE_REQUIRED, 'The module\'s branch to translate', 'master'),
                 )
             )
-            ->setHelp(
-                <<<EOF
-The <info>translate:module</info> translates a module given the module and branch name.
+            ->setHelp(<<<EOF
+The <info>module:translate</info> translates a module given the module and branch name.
 
-<info>php app/consoletranslate:module MODULE_NAME --branch=BRANCH_NAME</info>
-
+Fetches the latest changes in module repository, updates transaltions against
+current code and opens the pofile editor to complete untranslated strings.
 EOF
             );
     }

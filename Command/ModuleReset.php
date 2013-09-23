@@ -22,18 +22,15 @@ class ModuleReset extends Command
     {
         $this
             ->setName('module:reset')
-            ->setDescription('Resets the module local repository')
+            ->setDescription('Discards local changes in the module repository')
             ->setDefinition(
                 array(
                     new InputArgument('module', InputArgument::REQUIRED),
                 )
             )
-            ->setHelp(
-                <<<EOF
-The <info>module:reset</info> clones the GNOME repository for a given module
-
-<info>php app/console translate:download MODULE_NAME</info>
-
+            ->setHelp(<<<EOF
+The <info>module:reset</info> discards all the changes
+in the repository files for a given module.
 EOF
             );
     }

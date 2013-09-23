@@ -25,15 +25,17 @@ class ModuleReview extends Command
             ->setDescription('Resets the module local repository')
             ->setDefinition(
                 array(
-                    new InputArgument('module', InputArgument::REQUIRED),
+                    new InputArgument('module', InputArgument::REQUIRED, 'The module name to review'),
                 )
             )
-            ->setHelp(
-                <<<EOF
-The <info>module:reset</info> clones the GNOME repository for a given module
+            ->setHelp(<<<EOF
+The <info>module:review</info> checks all the translations for
+a given module and language.
 
-<info>php app/console translate:download MODULE_NAME</info>
+This command uses posieve under the hood and all the rules available
+for the selected language inside it.
 
+[WARNING] Check if your language has posieve rules for your language.
 EOF
             );
     }
