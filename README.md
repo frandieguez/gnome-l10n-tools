@@ -23,7 +23,19 @@ Take a look at the next link to get more information about this:
 
 http://getcomposer.org/doc/01-basic-usage.md
 
- composer.phar install
+    composer.phar install
+ 
+After that you have to copy the config.yaml.sample to config.yaml and change your desired values inside it
+
+    # Which release set do you want to translate
+    release_set: gnome-3-10
+    .
+    # Which language do you want to work with
+    language: gl # Galician
+    .
+    # GNOME Git repository settings
+    repository:
+        username: your_gnome_username
 
 
 Usage
@@ -31,8 +43,8 @@ Usage
 
 You can get all the available commands by checking the build in help
 
- ./console --help
- ./console command:name --help
+    ./console --help
+    ./console command:name --help
 
 Available commands
 ------------------
