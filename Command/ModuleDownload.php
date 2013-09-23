@@ -52,13 +52,22 @@ EOF
 
         $module = $this->input->getArgument('module');
 
-        $this->output->writeln("<comment>Downloading module $module</comment>");
+        if (is_dir(getcwd()."/$module")) {
+            $this->output->writeln("Fetching latest changes for '$module'");
 
-        $username = $this->config['repository']['username'];
+            chdir($this->config['base_dir'].'/modules/'.$module);
+            shell_exec("git pull --rebase");
+        } else {
+            $this->output->writeln("Downloading '$module' from GNOME");
 
-        shell_exec("git clone ssh://$username@git.gnome.org/git/$module");
+            $username = $this->config['repository']['username'];
+
+            shell_exec("git clone ssh://$username@git.gnome.org/git/$module");
+        }
 
         chdir($this->config['base_dir'].'/modules/'.$module);
         exec('git submodule update --init');
+
+        return true;
     }
 }
