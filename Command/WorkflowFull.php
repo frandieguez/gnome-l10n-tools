@@ -110,11 +110,11 @@ EOF
                 $output,
                 $tableRender.
                 '   Which module do you want to translate [0]: ',
-                0,
+                null,
                 $autoComplete
             );
 
-            if (is_string($selection)) {
+            if (is_string($selection) && $this->validModule($autoComplete, $selection)) {
                 $command = $this->getApplication()->find('module:translate');
                 $returnCode = $command->run(
                     new ArrayInput(
@@ -156,6 +156,21 @@ EOF
     protected function getConfig()
     {
         return $this->getApplication()->config;
+    }
+
+    /**
+     * undocumented function
+     *
+     * @return void
+     * @author
+     **/
+    protected function validModule($modules, $selection)
+    {
+        if (!in_array($selection, $modules)) {
+            return false;
+        }
+
+        return true;
     }
 
     protected function fetchStatsForReleaseAndLang($releaseSet, $lang)
