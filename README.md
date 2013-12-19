@@ -24,7 +24,7 @@ Take a look at the next link to get more information about this:
 http://getcomposer.org/doc/01-basic-usage.md
 
     composer.phar install
- 
+
 After that you have to copy the config.yaml.sample to config.yaml and change your desired values inside it
 
     # Which release set do you want to translate
@@ -126,6 +126,12 @@ for your language.
 
 The module:reset discards all the changes in the repository files for a given module.
 
+### tm:release
+
+tm:release creates a translation memory for a given release.
+
+Downloads the tarball compendium for a given release set and part (default: ui),
+and creates the po and tmx compendiums.
 
 And... what else?
 -----------------
