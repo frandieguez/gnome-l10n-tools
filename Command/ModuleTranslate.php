@@ -7,13 +7,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  **/
+
 namespace Command;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ModuleTranslate extends Command
@@ -24,12 +25,12 @@ class ModuleTranslate extends Command
             ->setName('module:translate')
             ->setDescription('Opens editor for the updated translations file of a module')
             ->setDefinition(
-                array(
+                [
                     new InputArgument('module', InputArgument::REQUIRED, 'The module to translate'),
                     new InputOption('branch', 'b', InputOption::VALUE_REQUIRED, 'The module\'s branch to translate', 'master'),
-                )
+                ]
             )
-            ->setHelp(<<<EOF
+            ->setHelp(<<<'EOF'
 The <info>module:translate</info> translates a module given the module and branch name.
 
 Fetches the latest changes in module repository, updates transaltions against
@@ -53,10 +54,10 @@ EOF
         chdir($this->config['base_dir']);
         $command = $this->getApplication()->find('module:download')->run(
             new ArrayInput(
-                array(
+                [
                     'command' => 'module:download',
                     'module'  => $module,
-                )
+                ]
             ),
             $output
         );
@@ -75,7 +76,7 @@ EOF
     }
 
     /**
-     * Search module path from its name
+     * Search module path from its name.
      *
      * @return void
      **/
@@ -85,9 +86,9 @@ EOF
     }
 
     /**
-     * Checks to a specific branch given by a argument
+     * Checks to a specific branch given by a argument.
      *
-     * @return boolean
+     * @return bool
      **/
     public function checkoutBranch($branch)
     {
@@ -100,22 +101,22 @@ EOF
     }
 
     /**
-     * Updates galician translations for a module
+     * Updates galician translations for a module.
      *
-     * @return boolean
+     * @return bool
      **/
     public function updateLatestTranslations()
     {
         $this->output->writeln("\t<info>Updating latest translations</info>");
 
-        chdir("./po/");
+        chdir('./po/');
         $this->output->writeln(
             shell_exec('LC_ALL=C intltool-update '.$this->config['language'])
         );
     }
 
     /**
-     * Launches the pofile editor
+     * Launches the pofile editor.
      *
      * @return void
      **/
@@ -124,7 +125,7 @@ EOF
         $this->output->writeln("\t<info>Launching pofile editor</info>");
 
         $this->output->writeln(
-            shell_exec("xdg-open ".getcwd()."/".$this->config['language'].".po")
+            shell_exec('xdg-open '.getcwd().'/'.$this->config['language'].'.po')
         );
     }
 }

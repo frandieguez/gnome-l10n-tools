@@ -7,13 +7,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  **/
+
 namespace Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class TranslationMemoryRelease extends Command
@@ -24,13 +24,13 @@ class TranslationMemoryRelease extends Command
             ->setName('tm:release')
             ->setDescription('Creates a translation memory for a given release')
             ->setDefinition(
-                array(
+                [
                     new InputArgument('release-set', InputArgument::REQUIRED, 'The release set name to use'),
                     new InputOption('part', 'p', InputOption::VALUE_REQUIRED, 'Which part to generate: ui or doc', 'ui'),
                     new InputOption('force', 'f', InputOption::VALUE_NONE, 'Force download of source files'),
-                )
+                ]
             )
-            ->setHelp(<<<EOF
+            ->setHelp(<<<'EOF'
 The <info>tm:release</info> creates a translation memory for a given release.
 
 Downloads the tarball compendium for a given release set and part (default: ui),
@@ -57,10 +57,9 @@ EOF
         $this->output->writeln("\tCreating working folder");
 
         $baseReleaseSetDir = $this->config['base_dir']."/final-products/$releaseSet";
-        $sourcesFolder     = $baseReleaseSetDir."/sources";
-        $compendiumsFolder = $baseReleaseSetDir."/compendiums";
-        $tmxFolder         = $baseReleaseSetDir."/tmx";
-
+        $sourcesFolder = $baseReleaseSetDir.'/sources';
+        $compendiumsFolder = $baseReleaseSetDir.'/compendiums';
+        $tmxFolder = $baseReleaseSetDir.'/tmx';
 
         $this->filesystem = new \Symfony\Component\Filesystem\Filesystem();
 
@@ -72,7 +71,7 @@ EOF
         try {
             $translationPackageFolder = $this->downloadTranslationPackage($sourcesFolder, $releaseSet, $part, $force);
 
-            $compendiumFile = $compendiumsFolder. "/$releaseSet-$part.compendium.po";
+            $compendiumFile = $compendiumsFolder."/$releaseSet-$part.compendium.po";
             $this->createPoCompendium($translationPackageFolder, $compendiumFile);
 
             $cleanedCompendiumFile = $this->cleanpoCompendium($compendiumFile);
@@ -88,9 +87,10 @@ EOF
     }
 
     /**
-     * undocumented function
+     * undocumented function.
      *
      * @return void
+     *
      * @author
      **/
     public function downloadTranslationPackage($targetFolder, $releaseSet, $part = 'ui', $force = false)
@@ -106,7 +106,7 @@ EOF
 
         $currentDir = getcwd();
 
-        $finalFolder = $targetFolder. "/$part-files";
+        $finalFolder = $targetFolder."/$part-files";
         $this->filesystem->mkdir($finalFolder);
         chdir($finalFolder);
 
@@ -118,9 +118,10 @@ EOF
     }
 
     /**
-     * undocumented function
+     * undocumented function.
      *
      * @return void
+     *
      * @author
      **/
     public function createPoCompendium($translationsFolderPath, $outputFilePath)
@@ -130,9 +131,10 @@ EOF
     }
 
     /**
-     * undocumented function
+     * undocumented function.
      *
      * @return void
+     *
      * @author
      **/
     public function cleanpoCompendium($compendiumFile)
@@ -145,9 +147,10 @@ EOF
     }
 
     /**
-     * undocumented function
+     * undocumented function.
      *
      * @return void
+     *
      * @author
      **/
     public function checkCompendiumFile($translationsFilePath)
@@ -157,9 +160,10 @@ EOF
     }
 
     /**
-     * undocumented function
+     * undocumented function.
      *
      * @return void
+     *
      * @author
      **/
     public function createFinalTMXfile($originalPoFile, $targetTMXFile)

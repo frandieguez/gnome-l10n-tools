@@ -7,13 +7,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  **/
+
 namespace Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ModuleCommit extends Command
@@ -24,11 +23,11 @@ class ModuleCommit extends Command
             ->setName('module:commit')
             ->setDescription('Commits available changes to local repository')
             ->setDefinition(
-                array(
+                [
                     new InputArgument('module', InputArgument::REQUIRED, 'Module to commit'),
-                )
+                ]
             )
-            ->setHelp(<<<EOF
+            ->setHelp(<<<'EOF'
 The <info>module:commit</info> commits available changes to the local repository.
 
 Before committing changes it shows the available changes and asks the user to accept them.
