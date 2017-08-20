@@ -7,13 +7,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  **/
+
 namespace Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ModuleReviewSpell extends Command
@@ -24,11 +23,11 @@ class ModuleReviewSpell extends Command
             ->setName('module:review:spell')
             ->setDescription('Spelling review for a given module')
             ->setDefinition(
-                array(
+                [
                     new InputArgument('module', InputArgument::REQUIRED, 'The module name to review'),
-                )
+                ]
             )
-            ->setHelp(<<<EOF
+            ->setHelp(<<<'EOF'
 The <info>module:review:spell</info> performs an spelling review  in
 all the translations for a given module and language.
 

@@ -7,13 +7,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  **/
+
 namespace Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ModulePush extends Command
@@ -24,11 +23,11 @@ class ModulePush extends Command
             ->setName('module:push')
             ->setDescription('Pushes changes to GNOME repository')
             ->setDefinition(
-                array(
+                [
                     new InputArgument('module', InputArgument::REQUIRED),
-                )
+                ]
             )
-            ->setHelp(<<<EOF
+            ->setHelp(<<<'EOF'
 The <info>module:push</info> commits available changes to
 the local repository.
 
@@ -49,9 +48,9 @@ EOF
 
         $this->output->writeln("<comment>Pushing changes to GNOME '$module' repository</comment>");
 
-        shell_exec("git pull --rebase");
+        shell_exec('git pull --rebase');
 
-        shell_exec("git push");
+        shell_exec('git push');
 
         $this->output->writeln('Push DONE');
     }

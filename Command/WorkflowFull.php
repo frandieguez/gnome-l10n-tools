@@ -7,13 +7,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  **/
+
 namespace Command;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class WorkflowFull extends Command
@@ -23,13 +23,13 @@ class WorkflowFull extends Command
         $this
             ->setName('workflow:full')
             ->setDefinition(
-                array(
+                [
                     new InputOption('release-set', 'r', InputOption::VALUE_REQUIRED, 'The release set to translate', null),
                     new InputOption('language', 'l', InputOption::VALUE_REQUIRED, 'The language to translate into', null),
-                )
+                ]
             )
             ->setDescription('Allows to translate a release set into a language')
-            ->setHelp(<<<EOF
+            ->setHelp(<<<'EOF'
 The <info>damned:lies</info> checks the GNOME Damned Lies web service to
 fetch real-time translation status for a given release set and language.
 
@@ -81,28 +81,28 @@ EOF
             return false;
         }
 
-        $rows = array();
-        $autoComplete = array();
+        $rows = [];
+        $autoComplete = [];
         foreach ($untranslatedModules as $key => $module) {
-            $rows []= array(
+            $rows[] = [
                 $module['name'],
                 $module['branch'],
                 $module['stats']['untranslated'],
                 $module['stats']['fuzzy'],
-                sprintf('%3d%%', ($module['stats']['total'] - $module['stats']['untranslated'] - $module['stats']['fuzzy']) / ($module['stats']['total']) * 100)
-            );
+                sprintf('%3d%%', ($module['stats']['total'] - $module['stats']['untranslated'] - $module['stats']['fuzzy']) / ($module['stats']['total']) * 100),
+            ];
 
-            $autoComplete []= $module['name'];
+            $autoComplete[] = $module['name'];
         }
 
         $table = $this->getHelperSet()->get('table');
         $table
             ->setLayout(\Symfony\Component\Console\Helper\TableHelper::LAYOUT_BORDERLESS)
-            ->setHeaders(array('Name', 'Branch', 'Untr.', 'Fuzzy', '%'))
+            ->setHeaders(['Name', 'Branch', 'Untr.', 'Fuzzy', '%'])
             ->setRows($rows);
 
         while (true) {
-            $this->output->writeln("   Modules with translations needed in {$config['language']}/{$config['release_set']} (".count($untranslatedModules).")");
+            $this->output->writeln("   Modules with translations needed in {$config['language']}/{$config['release_set']} (".count($untranslatedModules).')');
 
             $tableRender = $table->render($output);
 
@@ -118,11 +118,11 @@ EOF
                 $command = $this->getApplication()->find('module:translate');
                 $returnCode = $command->run(
                     new ArrayInput(
-                        array(
+                        [
                             'command'  => 'module:translate',
-                            'module' => $untranslatedModules[$selection]['name'],
-                            '--branch' => $untranslatedModules[$selection]['branch']
-                        )
+                            'module'   => $untranslatedModules[$selection]['name'],
+                            '--branch' => $untranslatedModules[$selection]['branch'],
+                        ]
                     ),
                     $output
                 );
@@ -130,10 +130,10 @@ EOF
                 $command = $this->getApplication()->find('module:commit');
                 $returnCode = $command->run(
                     new ArrayInput(
-                        array(
+                        [
                             'command'  => 'module:commit',
-                            'module' => $untranslatedModules[$selection]['name'],
-                        )
+                            'module'   => $untranslatedModules[$selection]['name'],
+                        ]
                     ),
                     $output
                 );
@@ -141,16 +141,15 @@ EOF
                 $command = $this->getApplication()->find('module:push');
                 $returnCode = $command->run(
                     new ArrayInput(
-                        array(
+                        [
                             'command'  => 'module:push',
-                            'module' => $untranslatedModules[$selection]['name'],
-                        )
+                            'module'   => $untranslatedModules[$selection]['name'],
+                        ]
                     ),
                     $output
                 );
             }
         }
-
     }
 
     protected function getConfig()
@@ -159,9 +158,10 @@ EOF
     }
 
     /**
-     * undocumented function
+     * undocumented function.
      *
      * @return void
+     *
      * @author
      **/
     protected function validModule($modules, $selection)
@@ -175,7 +175,7 @@ EOF
 
     protected function fetchStatsForReleaseAndLang($releaseSet, $lang)
     {
-        $this->output->write("   Fetching DL stats...");
+        $this->output->write('   Fetching DL stats...');
 
         $url = "https://l10n.gnome.org/languages/$lang/$releaseSet/xml";
         $serverContents = @simplexml_load_file($url);
@@ -187,28 +187,26 @@ EOF
 
         $categories = $serverContents->xpath('category');
 
-        $modules = array();
+        $modules = [];
         foreach ($categories as $category) {
-            $rawModules   = $category->module;
+            $rawModules = $category->module;
 
             foreach ($rawModules as $module) {
-                $modules [(string) $module->attributes()['id']]= array(
+                $modules[(string) $module->attributes()['id']] = [
                     'name'   => (string) $module->attributes()['id'],
                     'branch' => (string) $module->attributes()['branch'],
-                    'stats'  => array(
+                    'stats'  => [
                         'translated'   => (int) $module->domain->translated,
                         'untranslated' => (int) $module->domain->untranslated,
                         'fuzzy'        => (int) $module->domain->fuzzy,
-                        'total'        =>
-                            (int) $module->domain->translated
+                        'total'        => (int) $module->domain->translated
                             + (int) $module->domain->fuzzy
                             + (int) $module->domain->untranslated,
-                    )
-                );
+                    ],
+                ];
             }
-
         }
-        $this->output->writeln("<fg=green;> DONE</fg=green;>");
+        $this->output->writeln('<fg=green;> DONE</fg=green;>');
 
         return $modules;
     }
@@ -218,7 +216,7 @@ EOF
         $modules = array_filter(
             $stats,
             function ($module) {
-                return (($module['stats']['untranslated'] + $module['stats']['fuzzy']) > 0);
+                return ($module['stats']['untranslated'] + $module['stats']['fuzzy']) > 0;
             }
         );
 
@@ -246,9 +244,11 @@ EOF
         $configFile = __DIR__.'/../config.yaml';
         if (file_exists($configFile)) {
             $configuration = file_get_contents($configFile);
+
             return true;
         } else {
             $this->output->writeln("\t<error>Not configured... Running Setup Wizard.. TODO</error>");
+
             return false;
         }
     }
